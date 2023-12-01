@@ -18,17 +18,17 @@ class GPT2Attention(nn.Module):
         
     def forward(self, x):
         # Split input into multiple heads
-        q = self.Wq(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) # BxHxLxD_k
-        k = self.Wk(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) # BxHxLxD_k
-        v = self.Wv(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) # BxHxLxD_k
+        q = self.Wq(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) 
+        k = self.Wk(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) 
+        v = self.Wv(x).view(x.size(0), -1, self.n_heads, self.d_k).transpose(1, 2) 
         
         # Scaled dot-product attention
-        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.d_k ** 0.5) # BxHxLxL
+        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.d_k ** 0.5) 
         attn_weights = F.softmax(attn_scores, dim=-1)
-        attn_output = torch.matmul(self.dropout(attn_weights), v) # BxHxLxD_k
+        attn_output = torch.matmul(self.dropout(attn_weights), v) 
         
         # Merge heads and perform linear transformation
-        attn_output = attn_output.transpose(1, 2).contiguous().view(x.size(0), -1, self.n_heads * self.d_k) # BxLxH*D_k
+        attn_output = attn_output.transpose(1, 2).contiguous().view(x.size(0), -1, self.n_heads * self.d_k) 
         return self.out(attn_output)
 
 class GPT2PositionalEncoding(nn.Module):
